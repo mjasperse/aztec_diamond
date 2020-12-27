@@ -6,13 +6,14 @@
 
 # This is a really simple PySide-based GUI that draws the result of the aztec diamond iteration algorithm
 # Allows user to see how the pattern evolves as the dimension increases
-# Calculates A50 in <50ms, draws in <40ms
+# Calculates A50 in <20ms, draws in <50ms
 
 # Some TODOs:
 # - Handle resize() event
 # - Allow zooming in to see detail in diamond
 # - Animate the moving blocks (hard)
 # - Allow user to specify assignment of empty blocks
+# - Cache paths to improve draw time
 
 import six
 # this is a poor attempt at py2/py3 compatibility (only tested py3)
@@ -71,8 +72,8 @@ class AztecDiamondUI(QtWidgets.QDialog):
         self.scene.clear()
         self.view.resetTransform()
         # add the blocks
-        shape = self.az.grid.shape
         grid = self.az.grid.copy()
+        self.view.setSceneRect(0,0,SCALE*grid.shape[0],SCALE*grid.shape[1])
         for j in range(grid.shape[0]):
             for i in range(grid.shape[1]):
                 z = grid[i,j]

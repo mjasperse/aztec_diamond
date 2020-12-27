@@ -33,6 +33,8 @@ class AztecDiamond:
             # Start with an empty 2x2 array that we can grow
             self.grid = np.zeros((2,2),dtype=np.int)
             self.assign()
+        elif isinstance(seed,str):
+            self.from_str(seed)
         else:
             # Assume the user has provided a sane 2D array
             self.grid = np.array(seed,dtype=np.int)
@@ -88,15 +90,45 @@ class AztecDiamond:
                 self.grid[x:x+2,y+1] = ENUM_RIGHT
         
     def validate(self, rhs):
-        return np.all(self.grid == rhs)
+        if isinstance(rhs, str):
+            return str(self) == rhs
+        else:
+            return np.all(self.grid == rhs)
         
+    def from_str(self, s):
+        def parse_row(r):
+            for c in r.strip():
+                if c == 'U': yield ENUM_UP
+                elif c == 'D': yield ENUM_DOWN
+                elif c == 'L': yield ENUM_LEFT
+                elif c == 'R': yield ENUM_RIGHT
+                elif c == ' ': yield ENUM_BAD
+                elif c == '-': yield ENUM_EMPTY
+                else: raise ValueError('Unknown entry')
+        vals = [parse_row(row) for row in s.strip().split('\n')]
+        self.grid = np.asarray(vals, dtype=np.int)
+        assert self.grid.shape[0] == self.grid.shape[1]
+        assert self.grid.shape[0] % 2 == 0
+        return self.grid
+        
+    def __str__(self):
+        def to_string(z):
+            if z == ENUM_UP: return 'U'
+            elif z == ENUM_DOWN: return 'D'
+            elif z == ENUM_LEFT: return 'L'
+            elif z == ENUM_RIGHT: return 'R'
+            elif z == ENUM_BAD: return ' '
+            elif z == ENUM_EMPTY: return '-'
+            else: raise ValueError('Unknown entry')
+        rows = map(lambda x: ''.join(map(to_string,x)),self.grid)
+        return '\n'.join(rows)
     
 if __name__ == '__main__':
     # simple demonstration
     az = AztecDiamond()
-    print(az.grid)
+    print(az)
     for i in range(5):
         az.grow()
-        print(az.grid)
+        print(az)
     
     

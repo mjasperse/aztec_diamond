@@ -1,7 +1,7 @@
 # AZTEC DIAMOND "SQUARE DANCE"
 # Martijn Jasperse, Dec 2020
 #
-# Inspired by Mathologer's video on the "artic circle theorem"
+# Inspired by Mathologer's video on the "arctic circle theorem"
 # https://www.youtube.com/watch?v=Yy7Q8IWNfHM
 
 # We fill a 2D array with numbers representing the "arrows" discussed in the video
@@ -20,6 +20,8 @@ ENUM_DOWN = 2
 ENUM_LEFT = 3
 ENUM_RIGHT = 4
 
+GRID_DTYPE = np.int8
+
 class AztecDiamond:
     def __init__(self,callback=None,seed=None):
         # the callback is used to "assign" the squares when growing the diamond
@@ -32,13 +34,13 @@ class AztecDiamond:
         if seed is None:
             # Start with an empty 2x2 array that we can grow
             self.n = 1
-            self.grid = np.zeros((2,2),dtype=np.int)
+            self.grid = np.zeros((2,2),dtype=GRID_DTYPE)
             self.assign()
         elif isinstance(seed,str):
             self.from_str(seed)
         else:
             # Assume the user has provided a sane 2D array
-            self.grid = np.array(seed,dtype=np.int)
+            self.grid = np.array(seed,dtype=GRID_DTYPE)
             self.grid[self.grid>ENUM_RIGHT] = ENUM_EMPTY
             self.grid[self.grid<ENUM_EMPTY] = ENUM_BAD
             self.n = self.grid.shape[0] // 2
@@ -57,7 +59,7 @@ class AztecDiamond:
     def grow(self, assign=True):
         # Embed array in the next size up
         self.n += 1
-        grid = np.zeros((2*self.n, 2*self.n), dtype=np.int)
+        grid = np.zeros((2*self.n, 2*self.n), dtype=GRID_DTYPE)
         # Erase the corners
         xm, ym = np.ogrid[0:grid.shape[0], 0:grid.shape[1]]
         invalid = (abs(xm - self.n + 0.5) + abs(ym - self.n + 0.5)) > self.n
@@ -108,7 +110,7 @@ class AztecDiamond:
                 elif c == '-': yield ENUM_EMPTY
                 else: raise ValueError('Unknown entry')
         vals = [parse_row(row) for row in s.strip().split('\n')]
-        self.grid = np.asarray(vals, dtype=np.int)
+        self.grid = np.asarray(vals, dtype=GRID_DTYPE)
         assert self.grid.shape[0] == self.grid.shape[1]
         assert self.grid.shape[0] % 2 == 0
         return self.grid

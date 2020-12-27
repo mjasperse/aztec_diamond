@@ -31,6 +31,7 @@ class AztecDiamond:
         
         if seed is None:
             # Start with an empty 2x2 array that we can grow
+            self.n = 1
             self.grid = np.zeros((2,2),dtype=np.int)
             self.assign()
         elif isinstance(seed,str):
@@ -40,6 +41,7 @@ class AztecDiamond:
             self.grid = np.array(seed,dtype=np.int)
             self.grid[self.grid>ENUM_RIGHT] = ENUM_EMPTY
             self.grid[self.grid<ENUM_EMPTY] = ENUM_BAD
+            self.n = self.grid.shape[0] // 2
         
         
     def check(self):
@@ -54,11 +56,11 @@ class AztecDiamond:
         
     def grow(self, assign=True):
         # Embed array in the next size up
-        n = self.grid.shape[0]//2
-        grid = np.zeros((2*n+2, 2*n+2), dtype=np.int)
+        self.n += 1
+        grid = np.zeros((2*self.n, 2*self.n), dtype=np.int)
         # Erase the corners
         xm, ym = np.ogrid[0:grid.shape[0], 0:grid.shape[1]]
-        invalid = (abs(xm - n - 0.5) + abs(ym - n - 0.5)) > n+1
+        invalid = (abs(xm - self.n + 0.5) + abs(ym - self.n + 0.5)) > self.n
         grid[invalid] = ENUM_BAD
         
         # Check that the translations are valid

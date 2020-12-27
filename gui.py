@@ -27,10 +27,10 @@ from aztec import *
 import time
 
 BLOCK_PENS = {
-    ENUM_UP: QtGui.QColor('#f6511d'),
-    ENUM_DOWN: QtGui.QColor('#ffb400'),
-    ENUM_LEFT: QtGui.QColor('#00a6ed'),
-    ENUM_RIGHT: QtGui.QColor('#7fb800')
+    ENUM_UP: QtGui.QColor('#00a6ed'),
+    ENUM_DOWN: QtGui.QColor('#7fb800'),
+    ENUM_LEFT: QtGui.QColor('#ffb400'),
+    ENUM_RIGHT: QtGui.QColor('#f6511d')
 }
 SCALE = 10
 
